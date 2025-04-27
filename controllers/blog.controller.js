@@ -339,7 +339,7 @@ const checkLiked = async (req, res) => {
 
 const search = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search } = req.body;
 
     const [getBlogs] = await db
       .promise()
