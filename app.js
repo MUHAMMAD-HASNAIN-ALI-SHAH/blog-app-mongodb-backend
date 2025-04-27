@@ -23,5 +23,5 @@ app.use('/api/v1/auth', userRoute)
 PORT = process.env.PORT
 
 app.listen(PORT, () => {
-    console.log(`Blog server is running on port ${PORT}`);
+    console.log(`Blog server is running on the port ${PORT}`);
 });
