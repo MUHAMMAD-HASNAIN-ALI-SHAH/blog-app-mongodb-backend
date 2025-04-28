@@ -105,14 +105,14 @@ const logout = async (req, res) => {
         res.clearCookie("jwt", {
             httpOnly: true,
             secure: true,
-            sameSite: none,
+            sameSite: "none",
             path: '/',
         });
 
         return res.status(200).json({ msg: "Logout successful" });
     } catch (err) {
         console.error("Logout Controller Error: " + err.message);
-        res.status(500).json({ msg: "Internal Server Error", errorMsg: err.message });
+        res.status(500).json({ msg: "Internal Server Error" });
     }
 };
 
