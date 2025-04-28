@@ -112,7 +112,7 @@ const logout = async (req, res) => {
         return res.status(200).json({ msg: "Logout successful" });
     } catch (err) {
         console.error("Logout Controller Error: " + err.message);
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error", errorMsg: err.message });
     }
 };
 
