@@ -25,10 +25,10 @@ const registerValidator = async (req, res, next) => {
     }
 
     // Check if the username has 3 to 16 characters
-    if (username.length < 3 || username.length > 16) {
+    if (username.length < 3 || username.length > 50) {
       return res
         .status(400)
-        .json({ msg: "Username must be between 3 and 16 characters" });
+        .json({ msg: "Username must be between 3 and 50 characters" });
     }
 
     // Check if the email is less than 20 characters

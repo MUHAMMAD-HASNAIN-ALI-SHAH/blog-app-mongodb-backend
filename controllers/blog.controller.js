@@ -5,7 +5,7 @@ const addBlog = async (req, res) => {
   try {
     const user = req.user;
 
-    const { title, description, image } = req.body;
+    const { title, description, image, category } = req.body;
 
     const url = await cloudinary.uploader.upload(image, {
       folder: "blogs_data",
@@ -16,8 +16,8 @@ const addBlog = async (req, res) => {
     const [addBlog] = await db
       .promise()
       .query(
-        "INSERT INTO BLOGS (title, description, image, userId) VALUES (?, ?, ?, ?)",
-        [title, description, imageUrl, user.id]
+        "INSERT INTO BLOGS (title, description, image, category, userId) VALUES (?, ?, ?, ?, ?)",
+        [title, description, imageUrl, category, user.id]
       );
 
     return res.status(201).json({ msg: "Blog added successfully" });
@@ -29,7 +29,7 @@ const addBlog = async (req, res) => {
 const editBlog = async (req, res) => {
   try {
     const user = req.user;
-    const { id, title, description, image } = req.body;
+    const { id, title, description, image, category } = req.body;
 
     const [blog] = await db
       .promise()
@@ -62,8 +62,8 @@ const editBlog = async (req, res) => {
     await db
       .promise()
       .query(
-        "UPDATE BLOGS SET title = ?, description = ?, image = ? WHERE id = ?",
-        [title, description, imageUrl, id]
+        "UPDATE BLOGS SET title = ?, description = ?, image = ?, category = ? WHERE id = ?",
+        [title, description, imageUrl, category, id]
       );
 
     return res.status(200).json({ msg: "Blog updated successfully" });
@@ -136,7 +136,6 @@ const allBlogs = async (req, res) => {
 
 const blogData = async (req, res) => {
   try {
-    
     const { id } = req.params;
 
     const [blogData] = await db
@@ -315,7 +314,6 @@ const totalLikes = async (req, res) => {
 
 const checkLiked = async (req, res) => {
   try {
-     
     const user = req.user;
 
     const { id } = req.params;
@@ -343,16 +341,71 @@ const search = async (req, res) => {
 
     const [getBlogs] = await db
       .promise()
-      .query(
-        "SELECT * FROM BLOGS WHERE title LIKE ? OR description LIKE ?",
-        [`%${search}%`, `%${search}%`]
-      );
+      .query("SELECT * FROM BLOGS WHERE title LIKE ? OR description LIKE ?", [
+        `%${search}%`,
+        `%${search}%`,
+      ]);
 
     if (getBlogs.length === 0) {
       return res.status(200).json({ blogs: [] });
     }
 
     return res.status(200).json({ blogs: getBlogs });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+const categoryBlogs = async (req, res) => {
+  try {
+    const { category } = req.body;
+
+    console.log(category);
+
+    const [getBlogs] = await db
+      .promise()
+      .query("SELECT * FROM BLOGS WHERE category = ?", [category]);
+
+    if (getBlogs.length === 0) {
+      return res.status(200).json({ blogs: [] });
+    }
+
+    return res.status(200).json({ blogs: getBlogs });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+const viewBlogCount = async (req, res) => {
+  try {
+    const { blogId } = req.body;
+
+    const [blog] = await db
+      .promise()
+      .query("SELECT * FROM BLOGS WHERE id = ?", [blogId]);
+    if (blog.length === 0) {
+      return res.status(404).json({ msg: "Blog not found" });
+    }
+
+    const [viewCount] = await db
+      .promise()
+      .query("UPDATE BLOGS SET views = views + 1 WHERE id = ?", [blogId]);
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+const popularBlogs = async (req, res) => {
+  try {
+    const [popularBlogs] = await db
+      .promise()
+      .query("SELECT * FROM BLOGS ORDER BY views DESC LIMIT 3");
+    if (popularBlogs.length === 0) {
+      return res.status(404).json({ msg: "No popular blogs found" });
+    }
+    return res.status(200).json({ blogs: popularBlogs });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
   }
@@ -372,4 +425,7 @@ module.exports = {
   totalLikes,
   checkLiked,
   search,
+  categoryBlogs,
+  viewBlogCount,
+  popularBlogs,
 };
