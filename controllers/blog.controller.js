@@ -347,7 +347,7 @@ const search = async (req, res) => {
       ]);
 
     if (getBlogs.length === 0) {
-      return res.status(200).json({ blogs: [] });
+      return res.status(400).json({ blogs: [] });
     }
 
     return res.status(200).json({ blogs: getBlogs });
