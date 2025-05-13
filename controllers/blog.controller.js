@@ -172,24 +172,6 @@ const blogData = async (req, res) => {
   }
 };
 
-const checkBlogOwnerShip = async (req, res) => {
-  try {
-    const user = req.user;
-
-    const { blogId } = req.params;
-
-    const blog = await Blog.findOne({ _id: blogId, userId: user._id });
-
-    if (!blog) {
-      return res.status(404).json({ valid: false });
-    }
-
-    res.status(200).json({ valid: true });
-  } catch (err) {
-    return res.status(500).json({ msg: err.message });
-  }
-};
-
 const addComment = async (req, res) => {
   try {
     const user = req.user;
@@ -360,8 +342,6 @@ const categoryBlogs = async (req, res) => {
   try {
     const { category } = req.body;
 
-    console.log(category);
-
     const [getBlogs] = await db
       .promise()
       .query("SELECT * FROM BLOGS WHERE category = ?", [category]);
@@ -418,7 +398,6 @@ module.exports = {
   getMyBlogs,
   allBlogs,
   blogData,
-  checkBlogOwnerShip,
   addComment,
   totalComment,
   like,

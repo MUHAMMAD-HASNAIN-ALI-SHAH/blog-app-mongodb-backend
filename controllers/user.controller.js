@@ -46,7 +46,7 @@ const getCode = async (req, res) => {
 
     // Generate a random 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
     // Insert code into CODES table
     await db
