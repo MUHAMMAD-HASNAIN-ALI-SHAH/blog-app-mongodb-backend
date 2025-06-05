@@ -11,7 +11,7 @@ require("dotenv").config();
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors({
-    origin: "https://bloggy-hasnain.vercel.app",
+    origin: "*",
     credentials: true,
 }));
 app.use(express.json());
