@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../config/utils.js");
 const User = require("../models/user.model.js");
+const Profile = require("../models/profile.model.js");
 require("dotenv").config();
 
 const register = async (req, res) => {
@@ -17,6 +18,11 @@ const register = async (req, res) => {
     const existingUser = await User.find({ email });
     if (existingUser.length > 0) {
       return res.status(400).json({ msg: "User already exists" });
+    }
+
+    const existingUsername = await User.find({ username });
+    if (existingUsername.length > 0) {
+      return res.status(400).json({ msg: "Username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -56,6 +62,16 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
+    let profile = await Profile.findOne({ userId: user._id });
+    if (!profile) {
+      profile = {
+        name: "",
+        image: "",
+        bio: "",
+        userId: user._id,
+      };
+    }
+
     generateToken(user._id, res);
 
     return res.status(200).json({
@@ -65,6 +81,7 @@ const login = async (req, res) => {
         username: user.username,
         email: user.email,
       },
+      profile,
     });
   } catch (err) {
     console.error("Login Controller Error:", err.message);

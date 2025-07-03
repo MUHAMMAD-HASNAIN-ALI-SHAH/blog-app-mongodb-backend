@@ -1,11 +1,6 @@
 const registerValidator = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-
-    // Check if username is empty
-    if (!username) {
-      return res.status(400).json({ msg: "Please fill in username" });
-    }
+    const { email, password } = req.body;
 
     // Check if email is empty
     if (!email) {
@@ -22,13 +17,6 @@ const registerValidator = async (req, res, next) => {
       return res
         .status(400)
         .json({ msg: "Password must be at least 6 characters" });
-    }
-
-    // Check if the username has 3 to 16 characters
-    if (username.length < 3 || username.length > 50) {
-      return res
-        .status(400)
-        .json({ msg: "Username must be between 3 and 50 characters" });
     }
 
     // Check if the email is less than 20 characters
