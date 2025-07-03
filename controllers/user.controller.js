@@ -92,7 +92,16 @@ const login = async (req, res) => {
 const verify = async (req, res) => {
   try {
     const user = req.user;
-    return res.status(200).json({ user });
+    let profile = await Profile.findOne({ userId: user._id });
+    if (!profile) {
+      profile = {
+        name: "",
+        image: "",
+        bio: "",
+        userId: user._id,
+      };
+    }
+    return res.status(200).json({ user,profile });
   } catch (err) {
     console.error("Verify Controller Error:", err.message);
     return res.status(500).json({ msg: "Internal Server Error" });
