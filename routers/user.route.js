@@ -5,6 +5,7 @@ const {
   logout,
   register,
   updateProfile,
+  updateImage,
 } = require("../controllers/user.controller");
 const { protectedRoute } = require("../middlewares/auth.middleware");
 const {
@@ -19,5 +20,6 @@ router.route("/login").post(loginValidator, login);
 router.route("/verify").get(protectedRoute, verify);
 router.route("/logout").get(logout);
 router.route("/profile").put(protectedRoute, updateProfile);
+router.route("/image").put(protectedRoute, updateImage);
 
 module.exports = router;

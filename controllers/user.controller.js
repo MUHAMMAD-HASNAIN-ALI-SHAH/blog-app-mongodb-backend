@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require("../config/utils.js");
 const User = require("../models/user.model.js");
 const Profile = require("../models/profile.model.js");
+const cloudinary = require("../config/cloudinary");
 require("dotenv").config();
 
 const register = async (req, res) => {
@@ -154,4 +155,38 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { login, verify, logout, register, updateProfile };
+const updateImage = async (req, res) => {
+  try {
+    const user = req.user;
+    const { image } = req.body;
+
+    if (!image) {
+      return res.status(400).json({ msg: "Please provide an image URL" });
+    }
+
+    let profile = await Profile.findOne({ userId: user._id });
+    if (!profile) {
+      profile = new Profile({
+        userId: user._id,
+        name: "",
+        image: "",
+        bio: "",
+      });
+    }
+
+    const url = await cloudinary.uploader.upload(image, {
+      folder: "bloggy",
+    });
+    const imageUrl = url.secure_url;
+
+    profile.image = imageUrl;
+    await profile.save();
+
+    return res.status(200).json({ msg: "Image updated successfully",image: imageUrl });
+  } catch (err) {
+    console.error("Logout Controller Error:", err.message);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+module.exports = { login, verify, logout, register, updateProfile, updateImage };
