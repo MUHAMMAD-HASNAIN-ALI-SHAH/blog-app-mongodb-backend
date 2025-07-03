@@ -101,7 +101,7 @@ const verify = async (req, res) => {
         userId: user._id,
       };
     }
-    return res.status(200).json({ user,profile });
+    return res.status(200).json({ user, profile });
   } catch (err) {
     console.error("Verify Controller Error:", err.message);
     return res.status(500).json({ msg: "Internal Server Error" });
@@ -124,4 +124,34 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { login, verify, logout, register };
+const updateProfile = async (req, res) => {
+  try {
+    const user = req.user;
+    const { name, bio } = req.body;
+    if (!name || !bio) {
+      return res.status(400).json({ msg: "Please fill in all fields" });
+    }
+
+    let profile = await Profile.findOne({ userId: user._id });
+    if (!profile) {
+      profile = new Profile({
+        userId: user._id,
+        name: "",
+        image: "",
+        bio: "",
+      });
+    }
+
+    profile.name = name;
+    profile.bio = bio;
+
+    await profile.save();
+
+    return res.status(200).json({ msg: "Profile updated successfully" });
+  } catch (err) {
+    console.error("Logout Controller Error:", err.message);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+module.exports = { login, verify, logout, register, updateProfile };
