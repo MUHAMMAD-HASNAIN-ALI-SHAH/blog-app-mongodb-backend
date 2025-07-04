@@ -17,6 +17,7 @@ const {
   viewBlogCount,
   popularBlogs,
   likedBlogs,
+  totalViews,
 } = require("../controllers/blog.controller");
 const router = express.Router();
 
@@ -33,6 +34,7 @@ router.route("/comments").get(protectedRoute, totalComment); // get total commen
 router.route("/like/:id").post(protectedRoute, like); // liked the blog
 router.route("/likes").get(protectedRoute, totalLikes); // get total likes
 router.route("/like/:id").get(protectedRoute, checkLiked); // check that liked the blog
+router.route("/my-views").get(protectedRoute, totalViews); // views count
 
 router.route("/search").post(search); // search the blog
 

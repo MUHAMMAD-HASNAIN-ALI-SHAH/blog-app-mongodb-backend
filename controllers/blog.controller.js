@@ -325,6 +325,22 @@ const likedBlogs = async (req, res) => {
   }
 };
 
+const totalViews = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const blogs = await Blog.find({ userId: user._id });
+    if (blogs.length === 0) {
+      return res.status(200).json({ views: 0 });
+    }
+
+    const totalViews = blogs.reduce((acc, blog) => acc + blog.views, 0);
+    return res.status(200).json({ views: totalViews });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
 module.exports = {
   addBlog,
   editBlog,
@@ -342,4 +358,5 @@ module.exports = {
   viewBlogCount,
   popularBlogs,
   likedBlogs,
+  totalViews
 };
