@@ -148,7 +148,7 @@ const updateProfile = async (req, res) => {
 
     await profile.save();
 
-    return res.status(200).json({ msg: "Profile updated successfully" });
+    return res.status(200).json({ msg: "Profile updated successfully", profile });
   } catch (err) {
     console.error("Logout Controller Error:", err.message);
     return res.status(500).json({ msg: "Internal Server Error" });
