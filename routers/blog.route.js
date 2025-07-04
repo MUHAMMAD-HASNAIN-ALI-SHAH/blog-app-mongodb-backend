@@ -16,6 +16,7 @@ const {
   categoryBlogs,
   viewBlogCount,
   popularBlogs,
+  likedBlogs,
 } = require("../controllers/blog.controller");
 const router = express.Router();
 
@@ -40,5 +41,7 @@ router.route("/category").post(categoryBlogs); // category wise blogs
 router.route("/view-blog").post(viewBlogCount); // views count
 
 router.route("/popular-blogs").get(popularBlogs); // get popular blogs
+
+router.route("/liked-blogs").get(protectedRoute, likedBlogs); // get liked blogs profile page
 
 module.exports = router;

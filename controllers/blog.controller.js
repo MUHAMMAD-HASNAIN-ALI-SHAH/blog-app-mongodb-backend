@@ -34,7 +34,6 @@ const editBlog = async (req, res) => {
     const user = req.user;
     const { _id, title, description, image, category } = req.body;
 
-
     const blog = await Blog.findById(_id);
     if (!blog) {
       return res.status(404).json({ msg: "Blog not found" });
@@ -180,7 +179,9 @@ const totalComment = async (req, res) => {
 
     // Sum comments count across all blogs
     const blogIds = blogs.map((b) => b._id);
-    const totalComments = await Comment.countDocuments({ blogId: { $in: blogIds } });
+    const totalComments = await Comment.countDocuments({
+      blogId: { $in: blogIds },
+    });
 
     return res.status(200).json({ comments: totalComments });
   } catch (err) {
@@ -310,6 +311,20 @@ const popularBlogs = async (req, res) => {
   }
 };
 
+const likedBlogs = async (req, res) => {
+  try {
+    const user = req.user;
+    const blogs = await Like.find({ userId: user._id }).populate("blogId");
+    if (likedBlogs.length === 0) {
+      return res.status(404).json({ blogs: [] });
+    }
+
+    return res.status(200).json({ blogs });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
 module.exports = {
   addBlog,
   editBlog,
@@ -326,4 +341,5 @@ module.exports = {
   categoryBlogs,
   viewBlogCount,
   popularBlogs,
+  likedBlogs,
 };
